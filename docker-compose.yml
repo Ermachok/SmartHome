@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ./django
+    volumes:
+      - ./smart_home:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - smart-home-network
+    environment:
+      - DJANGO_SETTINGS_MODULE=smart_home.settings
+
+  bot:
+    build:
+      context: ./bot
+    volumes:
+      - ./bot:/app
+    networks:
+      - smart-home-network
+    depends_on:
+      - django
+
+networks:
+  smart-home-network:
+    driver: bridge
