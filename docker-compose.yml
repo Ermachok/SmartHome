@@ -5,7 +5,7 @@ services:
     build:
       context: ./django
     volumes:
-      - ./smart_home:/app
+      - ./django:/app
     ports:
       - "8000:8000"
     networks:
