@@ -9,13 +9,13 @@ from aiogram.filters import Command
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-TOKEN = config["TOKEN"]
+BOT_TOKEN = config["BOT_TOKEN"]
 ALLOWED_USERS = config["ALLOWED_USERS"]
 DJANGO_SERVER = config["DJANGO_SERVER"]
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 router = Router()
 
