@@ -46,7 +46,7 @@ def set_color(request):
     g = int(request.data.get("g", 255))
     b = int(request.data.get("b", 255))
     if lamp:
-        lamp.set_rgb(r, g, b)
+        lamp.set_rgb([r, g, b])
         return Response({"status": "success", "color": f"({r}, {g}, {b})"})
     return Response({"status": "error", "message": "Не удалось изменить цвет"}, status=500)
 
