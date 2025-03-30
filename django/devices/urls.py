@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import toggle_light, take_photo, set_brightness, set_color
+
+from .views import set_brightness, set_color, take_photo, toggle_light
 
 urlpatterns = [
     path("light/toggle/", toggle_light, name="toggle_light"),

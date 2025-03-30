@@ -8,4 +8,4 @@ class Light(models.Model):
 
 class Camera(models.Model):
     is_recording = models.BooleanField(default=False)
-    last_photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+    last_photo = models.ImageField(upload_to="photos/", null=True, blank=True)

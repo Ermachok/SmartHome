@@ -7,24 +7,42 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Camera',
+            name="Camera",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_recording', models.BooleanField(default=False)),
-                ('last_photo', models.ImageField(blank=True, null=True, upload_to='photos/')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_recording", models.BooleanField(default=False)),
+                (
+                    "last_photo",
+                    models.ImageField(blank=True, null=True, upload_to="photos/"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Light',
+            name="Light",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_on', models.BooleanField(default=False)),
-                ('brightness', models.IntegerField(default=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_on", models.BooleanField(default=False)),
+                ("brightness", models.IntegerField(default=100)),
             ],
         ),
     ]
