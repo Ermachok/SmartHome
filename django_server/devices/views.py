@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from .serializers import LightScheduleSerializer
 
 from django.conf import settings
-
 from .models import Camera, Light, LightSchedule
 
 try:
