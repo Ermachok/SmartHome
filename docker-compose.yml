@@ -17,25 +17,27 @@ services:
       - ./bot:/app
     network_mode: host
 
-#  celery:
-#      build: ./celery
-#      command: celery -A celery.celery_app worker --loglevel=info
-#      volumes:
-#        - ./django_server:/app
-#      depends_on:
-#        - redis
-#        - django
-#
-#  celery-beat:
-#    build: ./celery
-#    command: celery -A celery.celery_app beat --loglevel=info
-#    volumes:
-#      - ./django_server:/app
-#    depends_on:
-#      - redis
-#      - django
-#      - celery
-#
   redis:
     image: redis:latest
-    network_mode: host
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: ./django_server
+    command: celery -A smart_home worker --loglevel=info
+    volumes:
+      - ./django_server:/app
+    depends_on:
+      - redis
+      - django
+
+  celery-beat:
+    build: ./django_server
+    command: celery -A smart_home beat --loglevel=info
+    volumes:
+      - ./django_server:/app
+    depends_on:
+      - redis
+      - django
+      - celery
+
