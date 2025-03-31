@@ -3,13 +3,9 @@ version: '3.8'
 services:
   django:
     build:
-      context: ./django
+      context: ./django_server
     volumes:
-      - ./django:/app
-#    ports:
-#      - "8000:8000"
-#    networks:
-#      - smart-home-network
+      - ./django_server:/app
     network_mode: host
     environment:
       - DJANGO_SETTINGS_MODULE=smart_home.settings
@@ -21,17 +17,25 @@ services:
       - ./bot:/app
     network_mode: host
 
+#  celery:
+#      build: ./celery
+#      command: celery -A celery.celery_app worker --loglevel=info
+#      volumes:
+#        - ./django_server:/app
+#      depends_on:
+#        - redis
+#        - django
 #
-#  bot:
-#    build:
-#      context: ./bot
+#  celery-beat:
+#    build: ./celery
+#    command: celery -A celery.celery_app beat --loglevel=info
 #    volumes:
-#      - ./bot:/app
-#    networks:
-#      - smart-home-network
+#      - ./django_server:/app
 #    depends_on:
+#      - redis
 #      - django
+#      - celery
 #
-#networks:
-#  smart-home-network:
-#    driver: bridge
+  redis:
+    image: redis:latest
+    network_mode: host

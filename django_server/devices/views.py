@@ -1,11 +1,13 @@
 from miio import Yeelight
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import LightScheduleSerializer
 
 from django.conf import settings
-from django.shortcuts import render
 
-from .models import Camera, Light
+from .models import Camera, Light, LightSchedule
 
 try:
     LAMP_IP = settings.LAMP_IP
@@ -61,6 +63,22 @@ def set_color(request):
     return Response(
         {"status": "error", "message": "Не удалось изменить цвет"}, status=500
     )
+
+
+class ScheduleView(APIView):
+    def get(self, request):
+        """Возвращает текущее расписание."""
+        schedule = LightSchedule.objects.all()
+        serializer = LightScheduleSerializer(schedule, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Создает новое расписание."""
+        serializer = LightScheduleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
