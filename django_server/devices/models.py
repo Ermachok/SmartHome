@@ -36,11 +36,6 @@ class LightSchedule(models.Model):
         help_text="Включено ли это расписание"
     )
 
-    class Meta:
-        verbose_name = "Расписание света"
-        verbose_name_plural = "Расписания света"
-        ordering = ['time']
-
     def should_trigger_now(self, check_datetime=None):
         """
         Проверяет, должно ли сработать расписание в текущий момент времени.
@@ -49,9 +44,9 @@ class LightSchedule(models.Model):
         if not self.is_active:
             return False
 
-        now = check_datetime if check_datetime else datetime.now(pytz.timezone('Europe/Moscow'))
+        now = check_datetime or datetime.now(pytz.timezone('Europe/Moscow'))
         current_time = now.time()
-        current_day = now.strftime('%a').lower()
+        current_day = now.weekday()  # Получаем номер дня недели (0 - понедельник, 6 - воскресенье)
 
         time_matches = (
                 self.time.hour == current_time.hour and
@@ -60,13 +55,14 @@ class LightSchedule(models.Model):
 
         return time_matches and current_day in self.days
 
+    @classmethod
     def get_active_schedules_now(cls, check_datetime=None):
         """
         Классовый метод для получения всех активных расписаний, которые должны сработать сейчас.
         """
-        now = check_datetime if check_datetime else datetime.now(pytz.timezone('Europe/Moscow'))
+        now = check_datetime or datetime.now(pytz.timezone('Europe/Moscow'))
         current_time = now.time()
-        current_day = now.strftime('%a').lower()
+        current_day = now.weekday()
 
         return cls.objects.filter(
             is_active=True,
@@ -77,5 +73,5 @@ class LightSchedule(models.Model):
 
     def __str__(self):
         day_names = dict(self.DAYS_OF_WEEK)
-        days_display = ', '.join([day_names.get(day, day) for day in self.days])
+        days_display = ', '.join([day_names.get(self.DAYS_OF_WEEK[day][0], str(day)) for day in self.days])
         return f"Расписание на {self.time.strftime('%H:%M')} ({days_display})"
