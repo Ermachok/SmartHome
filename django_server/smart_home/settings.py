@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,7 +32,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-
     "devices",
     "django_celery_beat",
 ]
@@ -115,6 +115,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
