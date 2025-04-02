@@ -1,10 +1,11 @@
 from rest_framework import serializers
+
 from .models import LightSchedule
+
 
 class LightScheduleSerializer(serializers.ModelSerializer):
     days = serializers.ListField(
-        child=serializers.CharField(max_length=3),  \
-        required=True
+        child=serializers.CharField(max_length=3), required=True
     )
 
     class Meta:
