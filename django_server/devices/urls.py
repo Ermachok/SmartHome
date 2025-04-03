@@ -1,7 +1,6 @@
 from django.urls import path
 
-from .views import (ScheduleView, set_brightness, set_color, take_photo,
-                    toggle_light)
+from .views import ScheduleView, set_brightness, set_color, take_photo, toggle_light
 
 urlpatterns = [
     path("light/toggle/", toggle_light, name="toggle_light"),

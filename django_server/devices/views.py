@@ -79,6 +79,25 @@ class ScheduleView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, *args, **kwargs):
+        """Удаляет расписание по ID."""
+        schedule_id = request.data.get("id")
+        if not schedule_id:
+            return Response(
+                {"error": "ID обязателен"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schedule = LightSchedule.objects.get(id=schedule_id)
+            schedule.delete()
+            return Response(
+                {"message": "Расписание удалено"}, status=status.HTTP_204_NO_CONTENT
+            )
+        except LightSchedule.DoesNotExist:
+            return Response(
+                {"error": "Расписание не найдено"}, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 @api_view(["POST"])
 def take_photo(request):
