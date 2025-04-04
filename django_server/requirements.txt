@@ -48,6 +48,7 @@ propcache==0.3.0
 pycparser==2.22
 pycryptodome==3.22.0
 pydantic==2.10.6
+picamera==1.13
 pydantic_core==2.27.2
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0

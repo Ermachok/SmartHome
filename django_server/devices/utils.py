@@ -1,5 +1,6 @@
 import os
 import uuid
+import picamera
 from datetime import datetime
 from django.conf import settings
 from django.apps import apps
@@ -14,9 +15,9 @@ def take_photo():
     )
     filepath = os.path.join(settings.MEDIA_ROOT, "photos", filename)
 
-    # mock
-    with open(filepath, "wb") as f:
-        f.write(b"\x00" * 1024)
+    with picamera.PICamera() as camera:
+        camera.resolution = (1024, 768)
+        camera.capture(filepath)
 
     camera, _ = Camera.objects.get_or_create(id=1)
     camera.last_photo.name = f"photos/{filename}"
