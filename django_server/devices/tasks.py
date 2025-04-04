@@ -3,41 +3,38 @@ from datetime import datetime
 
 import pytz
 from django.apps import apps
-
+from utils import take_photo
 from celery import shared_task
 
 logger = logging.getLogger(__name__)
 
 
 @shared_task
-def check_light_schedules():
-    """Проверяет расписание и включает светильник."""
-    logger.info("Запуск задачи check_light_schedules...")
+def check_schedules():
+    """Проверяет расписания и выполняет нужные действия (включение света, снимки камеры)."""
+    logger.info("Запуск задачи check_schedules...")
 
     Light = apps.get_model("devices", "Light")
     LightSchedule = apps.get_model("devices", "LightSchedule")
+    CameraSchedule = apps.get_model("devices", "CameraSchedule")
 
     now = datetime.now(pytz.timezone("Europe/Moscow"))
 
-    all_schedules = LightSchedule.objects.all()
-    logger.info(f"Всего записей в LightSchedule: {all_schedules.count()}")
+    for schedule in LightSchedule.objects.all():
+        if schedule.should_trigger_now(now):
+            logger.info(f"Включаем светильник по расписанию ID {schedule.id}")
+            from .views import lamp
 
-    from .views import lamp
+            if lamp:
+                lamp.on(mode=1)
+                Light.objects.update_or_create(defaults={"is_on": True})
+            else:
+                logger.warning("lamp не найден, невозможно включить свет.")
 
-    if not lamp:
-        logger.warning("Светильник не найден, невозможно включить свет.")
-        return
+    logger.info(now)
+    for schedule in CameraSchedule.objects.all():
+        if schedule.should_trigger_now(now):
+            logger.info(f"Делаем снимок по расписанию ID {schedule.id}")
+            take_photo()
 
-    logger.info(f"Now {now}")
-    for schedule in all_schedules:
-        logger.info(schedule.should_trigger_now(now))
-        if not schedule.should_trigger_now(now):
-            continue
-
-        logger.info(f"Расписание ID {schedule.id} подходит. Включаем светильник.")
-
-        lamp.on(mode=1)
-        Light.objects.update_or_create(defaults={"is_on": True})
-        logger.info("Светильник включен.")
-
-    logger.info("Задача check_light_schedules завершена.")
+    logger.info("Задача check_schedules завершена.")

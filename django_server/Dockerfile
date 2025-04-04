@@ -14,3 +14,5 @@ COPY . .
 EXPOSE 8000
 
 CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s \
+  CMD curl -f http://localhost:8000/ || exit 1
