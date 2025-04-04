@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytz
 from django.apps import apps
-from utils import take_photo
+from .utils import take_photo
 from celery import shared_task
 
 logger = logging.getLogger(__name__)

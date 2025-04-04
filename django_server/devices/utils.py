@@ -14,6 +14,7 @@ def take_photo():
     )
     filepath = os.path.join(settings.MEDIA_ROOT, "photos", filename)
 
+    # mock
     with open(filepath, "wb") as f:
         f.write(b"\x00" * 1024)
 
