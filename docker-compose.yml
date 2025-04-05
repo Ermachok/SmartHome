@@ -6,6 +6,7 @@ services:
       context: ./django_server
     volumes:
       - ./django_server:/app
+      - media_volume:/app/media
     network_mode: host
     environment:
       - DJANGO_SETTINGS_MODULE=smart_home.settings
@@ -15,6 +16,7 @@ services:
       context: ./bot
     volumes:
       - ./bot:/app
+      - media_volume:/app/media
     network_mode: host
 
   redis:
@@ -41,3 +43,5 @@ services:
       - django
       - celery
 
+volumes:
+  media_volume:

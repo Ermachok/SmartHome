@@ -1,4 +1,6 @@
+from django.apps import apps
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 from miio import Yeelight
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,6 +9,7 @@ from rest_framework.views import APIView
 
 from .models import Camera, Light, LightSchedule
 from .serializers import LightScheduleSerializer
+from .utils import take_photo as make_photo
 
 try:
     LAMP_IP = settings.LAMP_IP
@@ -99,7 +102,16 @@ class ScheduleView(APIView):
             )
 
 
+@csrf_exempt
 @api_view(["POST"])
 def take_photo(request):
-    """Заглушка для снимка с камеры"""
-    return Response({"status": "photo taken (mock)"})
+    photo_path = make_photo()
+
+    if not photo_path:
+        return Response({"status": "error", "message": "Не удалось сделать фото"})
+
+    camera = apps.get_model("devices", "Camera").objects.get(id=1)
+
+    photo_url = request.build_absolute_uri(settings.MEDIA_URL + camera.last_photo.name)
+
+    return Response({"status": "success", "photo_url": photo_url}, status=200)
