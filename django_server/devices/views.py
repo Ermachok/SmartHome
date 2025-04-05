@@ -1,15 +1,15 @@
+from django.apps import apps
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 from miio import Yeelight
 from rest_framework import status
-from django.apps import apps
 from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .utils import take_photo as make_photo
 
 from .models import Camera, Light, LightSchedule
 from .serializers import LightScheduleSerializer
+from .utils import take_photo as make_photo
 
 try:
     LAMP_IP = settings.LAMP_IP
@@ -100,6 +100,7 @@ class ScheduleView(APIView):
             return Response(
                 {"error": "Расписание не найдено"}, status=status.HTTP_404_NOT_FOUND
             )
+
 
 @csrf_exempt
 @api_view(["POST"])

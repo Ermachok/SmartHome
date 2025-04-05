@@ -1,26 +1,33 @@
 import os
 import uuid
-import picamera
 from datetime import datetime
-from django.conf import settings
+
+import requests
 from django.apps import apps
+from django.conf import settings
 
 
 def take_photo():
-    """Делает фото и сохраняет в media/photos/"""
-    Camera = apps.get_model("devices", "Camera")
+    """Получает фото с Flask сервера и сохраняет в media/photos/"""
 
-    filename = (
-        f"photo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}.jpg"
-    )
-    filepath = os.path.join(settings.MEDIA_ROOT, "photos", filename)
+    flask_api_url = "http://192.168.0.106:5000/take_photo"
 
-    with picamera.PICamera() as camera:
-        camera.resolution = (1024, 768)
-        camera.capture(filepath)
+    response = requests.get(flask_api_url)
 
-    camera, _ = Camera.objects.get_or_create(id=1)
-    camera.last_photo.name = f"photos/{filename}"
-    camera.save()
+    if response.status_code == 200:
+        filename = f"photo_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}.jpg"
+        filepath = os.path.join(settings.MEDIA_ROOT, "photos", filename)
 
-    return filepath
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        with open(filepath, "wb") as photo_file:
+            photo_file.write(response.content)
+
+        Camera = apps.get_model("devices", "Camera")
+        camera, _ = Camera.objects.get_or_create(id=1)
+        camera.last_photo.name = f"photos/{filename}"
+        camera.save()
+
+        return filepath
+    else:
+        raise Exception("Ошибка при получении фото с Flask сервера")

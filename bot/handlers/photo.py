@@ -1,10 +1,11 @@
-import requests
+import logging
+
 import aiohttp
-from aiogram import Router, types, F
+import requests
+from aiogram import F, Router, types
 from aiogram.types import URLInputFile
 from config import DJANGO_SERVER
 from keyboards import main_keyboard
-import logging
 from utils import is_user_allowed
 
 # Настройка логирования
@@ -39,7 +40,7 @@ async def take_photo(message: types.Message):
                 photo = URLInputFile(photo_url)
                 await message.answer_photo(photo=photo, caption="📸 Ваше фото")
             else:
-                error_message = data.get('message', 'Неизвестная ошибка')
+                error_message = data.get("message", "Неизвестная ошибка")
                 logger.error(f"Ошибка на сервере Django: {error_message}")
                 await message.answer(f"Ошибка: {error_message}")
         else:
